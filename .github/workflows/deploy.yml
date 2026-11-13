@@ -29,9 +29,9 @@ jobs:
           composer install --prefer-dist --no-interaction --no-progress
           cp .env.example .env
           php artisan key:generate --force
-          php artisan test
           npm ci --no-audit --no-fund
           npm run build
+          php artisan test
       - name: Prepare production artifact
         run: |
           composer install --no-dev --prefer-dist --classmap-authoritative --no-interaction --no-progress
