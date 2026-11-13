@@ -1,0 +1,66 @@
+name: Validate and deploy Laravel
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: amalez-pack-trade-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: shivammathur/setup-php@d52fc211a0436f8839a587b3b5b8efddab4744ea # v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, fileinfo, curl, pdo_sqlite, sqlite3, xml, zip
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install and test
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          cp .env.example .env
+          php artisan key:generate --force
+          php artisan test
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Prepare production artifact
+        run: |
+          composer install --no-dev --prefer-dist --classmap-authoritative --no-interaction --no-progress
+          php deploy/package-release.php . .tooling/release.tar.gz "$GITHUB_SHA"
+      - name: Deploy through verified SSH
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
+          HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+          HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ "$HOSTINGER_HOST" =~ ^[0-9.]+$ && "$HOSTINGER_PORT" =~ ^[0-9]+$ && "$HOSTINGER_USERNAME" =~ ^u[0-9]+$ ]]
+          [[ "$HOSTINGER_DEPLOY_PATH" == "/home/$HOSTINGER_USERNAME/applications/amalez-pack-trade" ]]
+          mkdir -p "$RUNNER_TEMP/deploy-ssh"
+          printf '%s\n' "$HOSTINGER_SSH_KEY" > "$RUNNER_TEMP/deploy-ssh/key"
+          printf '%s\n' "$HOSTINGER_KNOWN_HOSTS" > "$RUNNER_TEMP/deploy-ssh/known_hosts"
+          ssh_options=(-i "$RUNNER_TEMP/deploy-ssh/key" -o IdentitiesOnly=yes -o BatchMode=yes -o KexAlgorithms=curve25519-sha256 -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/deploy-ssh/known_hosts")
+          release_id="$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          artifact_hash=$(sha256sum .tooling/release.tar.gz | cut -d ' ' -f 1)
+          ssh "${ssh_options[@]}" -p "$HOSTINGER_PORT" "$HOSTINGER_USERNAME@$HOSTINGER_HOST" "mkdir -p '$HOSTINGER_DEPLOY_PATH/incoming'"
+          scp "${ssh_options[@]}" -P "$HOSTINGER_PORT" .tooling/release.tar.gz "$HOSTINGER_USERNAME@$HOSTINGER_HOST:$HOSTINGER_DEPLOY_PATH/incoming/$release_id.tar.gz"
+          ssh "${ssh_options[@]}" -p "$HOSTINGER_PORT" "$HOSTINGER_USERNAME@$HOSTINGER_HOST" "bash -s -- '$HOSTINGER_DEPLOY_PATH' '$release_id' '$GITHUB_SHA' '$artifact_hash' activate" < deploy/deploy-release.sh
+      - name: Verify public domain
+        run: |
+          curl --fail --silent --show-error --retry 3 --retry-delay 5 https://amalezpacktrade.com/ > /tmp/homepage.html
+          grep -q 'Protect the product.' /tmp/homepage.html
+          curl --fail --silent --show-error https://amalezpacktrade.com/release.json | php -r '$r=json_decode(stream_get_contents(STDIN),true); exit(($r["commit"]??"")===getenv("GITHUB_SHA")?0:1);'
