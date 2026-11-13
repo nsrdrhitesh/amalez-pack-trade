@@ -16,6 +16,7 @@ release="$deploy_root/releases/$release_id"
 shared="$deploy_root/shared"
 archive="$deploy_root/incoming/$release_id.tar.gz"
 mkdir -p "$deploy_root/releases" "$deploy_root/backups" "$shared/storage" "$deploy_root/incoming"
+chmod 755 "$HOME/applications" "$deploy_root" "$deploy_root/releases"
 printf '%s  %s\n' "$artifact_hash" "$archive" | sha256sum --check --status
 
 if [[ ! -e "$release/.prepared" ]]; then

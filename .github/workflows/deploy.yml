@@ -35,7 +35,7 @@ jobs:
       - name: Prepare production artifact
         run: |
           composer install --no-dev --prefer-dist --classmap-authoritative --no-interaction --no-progress
-          php deploy/package-release.php . .tooling/release.tar.gz "$GITHUB_SHA"
+          node deploy/package-release.mjs . .tooling/release.tar.gz "$GITHUB_SHA"
       - name: Deploy through verified SSH
         env:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
