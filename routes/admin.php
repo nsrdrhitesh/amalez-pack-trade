@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('admin.enabled')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('login', [AuthController::class, 'loginForm'])->name('login');
         Route::post('login', [AuthController::class, 'login'])->middleware('throttle:30,1');

@@ -22,7 +22,7 @@ class PackagingWebsiteTest extends TestCase
         config(['session.driver' => 'database', 'session.connection' => 'nonexistent']);
         $queries = [];
         DB::listen(function ($query) use (&$queries) { $queries[] = $query->sql; });
-        $this->get('/')->assertOk()->assertSee('Amlex Pack Trade')->assertCookieMissing(config('session.cookie'));
+        $this->get('/')->assertOk()->assertSee('Amlez Pack Trade')->assertCookieMissing(config('session.cookie'));
         $this->assertSame([], $queries);
     }
 

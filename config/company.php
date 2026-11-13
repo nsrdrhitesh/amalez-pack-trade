@@ -1,8 +1,8 @@
 <?php
 
 return [
-    // Working display name supplied in the brief; not a verified legal identity.
-    'name' => 'Amlex Pack Trade',
+    // Confirmed display name; the registered legal identity remains unspecified.
+    'name' => env('COMPANY_NAME', 'Amlez Pack Trade'),
     'domain' => 'https://amalezpacktrade.com',
     'legal_name' => null,
     'logo' => null,

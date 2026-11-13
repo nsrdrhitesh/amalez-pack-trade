@@ -1,8 +1,9 @@
 import Alpine from 'alpinejs';
 Alpine.data('packagingSite', () => ({
     active: 'home', filter: 'All formats', category: '', selected: null, summary: '',
-    products: [], observer: null,
+    products: [], observer: null, brand: '',
     init() {
+        this.brand = document.querySelector('meta[property="og:site_name"]')?.content || 'Amlez Pack Trade';
         this.products = JSON.parse(document.getElementById('packaging-products')?.textContent || '[]');
         this.observer = new IntersectionObserver(entries => {
             for (const entry of entries) if (entry.isIntersecting) this.active = entry.target.id;
@@ -24,7 +25,7 @@ Alpine.data('packagingSite', () => ({
         const data = new FormData(form);
         const category = form.querySelector('select').selectedOptions[0].textContent;
         this.summary = [
-            'AMLEX PACK TRADE — REQUIREMENT BRIEF', 'Prepared locally. Not submitted.', '',
+            this.brand.toUpperCase() + ' — REQUIREMENT BRIEF', 'Prepared locally. Not submitted.', '',
             'Name: ' + data.get('full_name'), 'Company: ' + (data.get('company_name') || 'Not provided'),
             'Email: ' + data.get('email'), 'Phone: ' + (data.get('phone') || 'Not provided'),
             'Format: ' + category, '', 'Requirement:', data.get('details'),
@@ -35,7 +36,7 @@ Alpine.data('packagingSite', () => ({
         if (!this.summary) return;
         const url = URL.createObjectURL(new Blob([this.summary], { type: 'text/plain;charset=utf-8' }));
         const anchor = document.createElement('a');
-        anchor.href = url; anchor.download = 'amlex-pack-trade-requirement.txt';
+        anchor.href = url; anchor.download = 'amlez-pack-trade-requirement.txt';
         document.body.appendChild(anchor); anchor.click(); anchor.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     },
