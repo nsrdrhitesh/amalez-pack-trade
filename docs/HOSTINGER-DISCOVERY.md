@@ -1,5 +1,7 @@
 # Live hosting discovery — 2026-11-13
 
+> Historical discovery and initial static-site deployment. The subsequent production admin database activation is documented in [PRODUCTION-ADMIN.md](PRODUCTION-ADMIN.md).
+
 Verified via the signed-in Hostinger hPanel UI (the hosted MCP connection is configured but its operations are not exposed in this session):
 
 - Current application commit: `3182457cb7876daa796f7f972d2d91ef36f49e9e`, branch `main`; clean working tree before this report.
