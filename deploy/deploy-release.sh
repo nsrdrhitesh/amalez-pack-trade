@@ -49,7 +49,10 @@ if [[ ! -e "$release/.prepared" ]]; then
         require "vendor/autoload.php";
         $app=require "bootstrap/app.php";
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-        if(config("app.env")!=="production" || config("app.debug") || config("admin.enabled") || config("admin.registration_enabled") || config("app.url")!=="https://amalezpacktrade.com" || config("session.driver")!=="file" || config("cache.default")!=="file" || config("queue.default")!=="sync" || !config("session.secure") || !config("app.key")) {fwrite(STDERR,"Production configuration validation failed\n");exit(1);}
+        if(config("app.env")!=="production" || config("app.debug") || config("admin.registration_enabled") || config("app.url")!=="https://amalezpacktrade.com" || config("session.driver")!=="file" || config("cache.default")!=="file" || config("queue.default")!=="sync" || !config("session.secure") || !config("app.key")) {fwrite(STDERR,"Production configuration validation failed\n");exit(1);}
+        if(config("admin.enabled")) {
+            if(config("database.default")!=="mysql" || !Illuminate\Support\Facades\Schema::hasColumn("users","is_admin") || !Illuminate\Support\Facades\Schema::hasTable("demo_activity_logs") || !Illuminate\Support\Facades\Schema::hasTable("admin_bootstrap_invitations")) {fwrite(STDERR,"Admin database readiness validation failed\n");exit(1);}
+        }
         $response=$app->make(Illuminate\Contracts\Http\Kernel::class)->handle(Illuminate\Http\Request::create("https://amalezpacktrade.com/"));
         if($response->getStatusCode()!==200 || !str_contains($response->getContent(),"Protect the product.") || !str_contains($response->getContent(),"Amlez Pack Trade")) {fwrite(STDERR,"Staged Laravel smoke test failed\n");exit(1);}
         echo "Staged Laravel application boots with production settings.\n";

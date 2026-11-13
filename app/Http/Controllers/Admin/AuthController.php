@@ -12,6 +12,12 @@ class AuthController extends Controller {
     public function loginForm() { return view('admin.auth.form', ['register' => false]); }
     public function registerForm() { return view('admin.auth.form', ['register' => true]); }
     public function register(Request $request) {
+        if (app()->environment('production')) {
+            $user = app(\App\Services\AdminBootstrap::class)->register($request);
+            Auth::login($user);
+            $request->session()->regenerate();
+            return redirect()->route('admin.dashboard')->with('status', 'Administrator provisioned. Bootstrap registration is now closed.');
+        }
         $data = $request->validate([
             'name' => ['required','string','max:100'],
             'email' => ['required','email','max:255','unique:users,email'],

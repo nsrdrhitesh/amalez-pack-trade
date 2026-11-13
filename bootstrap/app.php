@@ -13,5 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
         $middleware->alias(['admin' => EnsureAdmin::class, 'local.registration' => LocalRegistration::class, 'admin.enabled' => \App\Http\Middleware\AdminModuleEnabled::class]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {})
+    ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->dontFlash(['provisioning_token']);
+    })
     ->create();
