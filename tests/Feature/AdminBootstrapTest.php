@@ -120,4 +120,15 @@ class AdminBootstrapTest extends TestCase
         $this->artisan('admin:invite-bootstrap', ['email' => 'owner@example.test'])
             ->expectsOutput('Bootstrap is closed or that email is already registered.')->assertFailed();
     }
+
+    public function test_form_views_do_not_exhaust_the_registration_submission_limit(): void
+    {
+        $token = $this->invitation();
+        for ($i = 0; $i < 10; $i++) {
+            $this->get('https://localhost/admin/register')->assertOk();
+        }
+        $this->post('https://localhost/admin/register', $this->payload($token))
+            ->assertRedirect(route('admin.dashboard'));
+        $this->assertDatabaseCount('users', 1);
+    }
 }
