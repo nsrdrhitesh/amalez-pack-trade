@@ -14,6 +14,7 @@ $tarPath = substr($output, 0, -3);
 if (file_exists($tarPath) || file_exists($output)) throw new RuntimeException('Artifact exists; use a new output path.');
 if (!is_dir(dirname($output))) mkdir(dirname($output), 0700, true);
 $archive = new PharData($tarPath);
+$archive->startBuffering();
 $excluded = ['.git', '.github', '.tooling', 'node_modules', 'storage', 'tests', 'docs', 'scripts', 'resources/images/source'];
 $filter = new RecursiveCallbackFilterIterator(new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS), function ($entry) use ($source, $excluded) {
     $relative = str_replace('\\', '/', substr($entry->getPathname(), strlen($source) + 1));
@@ -32,5 +33,6 @@ foreach (new RecursiveIteratorIterator($filter) as $entry) {
     $archive->addFile($entry->getPathname(), $relative); $count++;
 }
 $archive->addFromString('public/release.json',json_encode(['commit'=>$commit,'built_at'=>gmdate('c')],JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR)."\n");
+$archive->stopBuffering();
 $archive->compress(Phar::GZ);
 echo json_encode(['files'=>$count+1,'bytes'=>filesize($output),'sha256'=>hash_file('sha256',$output),'commit'=>$commit],JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR).PHP_EOL;
