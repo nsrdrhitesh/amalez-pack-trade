@@ -46,6 +46,7 @@ if [[ ! -e "$release/.prepared" ]]; then
     php artisan route:cache --no-interaction
     php artisan view:cache --no-interaction
     php -r '
+        require "vendor/autoload.php";
         $app=require "bootstrap/app.php";
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
         if(config("app.env")!=="production" || config("app.debug") || config("admin.enabled") || config("admin.registration_enabled") || config("app.url")!=="https://amalezpacktrade.com" || config("session.driver")!=="file" || config("cache.default")!=="file" || config("queue.default")!=="sync" || !config("session.secure") || !config("app.key")) {fwrite(STDERR,"Production configuration validation failed\n");exit(1);}
