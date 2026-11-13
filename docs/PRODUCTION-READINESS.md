@@ -1,5 +1,7 @@
 # Production-readiness inspection — 2026-11-13
 
+> This document records the original pre-deployment inspection. For current deployment status, see [HOSTINGER-DISCOVERY.md](HOSTINGER-DISCOVERY.md). The application is live on HTTPS and GitHub Actions deployment has completed successfully.
+
 ## Verified before deployment changes
 
 - Local project: `laravel-fullstack-starter`; Laravel 12.71.0; PHP requirement `^8.2`.
