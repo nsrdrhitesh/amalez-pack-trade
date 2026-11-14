@@ -14,6 +14,7 @@ class PackagingWebsiteTest extends TestCase
         $document->loadHTML('<?xml encoding="UTF-8">'.$html);
         libxml_clear_errors();
         libxml_use_internal_errors($previous);
+
         return $document;
     }
 
@@ -21,8 +22,10 @@ class PackagingWebsiteTest extends TestCase
     {
         config(['session.driver' => 'database', 'session.connection' => 'nonexistent']);
         $queries = [];
-        DB::listen(function ($query) use (&$queries) { $queries[] = $query->sql; });
-        $this->get('/')->assertOk()->assertSee('Amlez Pack Trade')->assertCookieMissing(config('session.cookie'));
+        DB::listen(function ($query) use (&$queries) {
+            $queries[] = $query->sql;
+        });
+        $this->get('/')->assertOk()->assertSee('Amalez Pack Trade')->assertCookieMissing(config('session.cookie'));
         $this->assertSame([], $queries);
     }
 
@@ -51,7 +54,7 @@ class PackagingWebsiteTest extends TestCase
         $xpath = new \DOMXPath($document);
         $this->assertSame('https://amalezpacktrade.com/', $xpath->query('//link[@rel="canonical"]')->item(0)->getAttribute('href'));
         $this->assertSame('noindex,nofollow', $xpath->query('//meta[@name="robots"]')->item(0)->getAttribute('content'));
-        foreach (['og:title','og:description','og:url','og:image'] as $property) {
+        foreach (['og:title', 'og:description', 'og:url', 'og:image'] as $property) {
             $this->assertSame(1, $xpath->query('//meta[@property="'.$property.'"]')->length);
         }
         $schema = json_decode($xpath->query('//script[@type="application/ld+json"]')->item(0)->textContent, true, 512, JSON_THROW_ON_ERROR);

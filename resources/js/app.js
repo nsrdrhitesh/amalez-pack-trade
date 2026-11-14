@@ -1,4 +1,6 @@
 import Alpine from 'alpinejs';
+import registerSite from './site';
+registerSite(Alpine);
 Alpine.data('packagingSite', () => ({
     active: 'home', filter: 'All formats', category: '', selected: null, summary: '',
     products: [], observer: null, brand: '',

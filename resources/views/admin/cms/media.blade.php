@@ -1,0 +1,11 @@
+@extends('admin.layouts.cms') @section('title','Media library') @section('content')
+<div class="dashboard-heading"><div><span class="eyebrow">ASSET LIBRARY</span><h1>Images with purpose.</h1><p>Validated raster images. Required ALT text. Reusable across the website.</p></div></div><x-cms.filters/>
+<details class="panel cms-form-panel" open><summary>Upload an image</summary><form method="POST" action="{{ route('admin.media.store') }}" enctype="multipart/form-data" class="cms-form-grid">
+@csrf<x-cms.field name="image" label="JPEG, PNG or WebP · up to 5 MB / 24 MP" type="file" required accept="image/jpeg,image/png,image/webp"/><x-cms.field name="alt" label="Descriptive ALT text" required maxlength="255"/><x-cms.field name="caption" label="Caption"/><button class="button button-primary" type="submit">Upload image</button></form></details>
+<div class="cms-media-grid">
+@forelse($records  as $image)<article class="panel cms-form-panel"><img src="{{ $image->url }}" alt="{{ $image->alt }}" width="{{ $image->width }}" height="{{ $image->height }}" loading="lazy"><small>{{ $image->width }} × {{ $image->height }} · {{ number_format($image->size/1024) }} KB · {{ $image->mime }}</small><form method="POST" action="{{ route('admin.media.update',$image) }}" enctype="multipart/form-data">
+@csrf @method('PUT')<x-cms.field :name="'alt'" label="ALT text" :value="$image->alt" required/><x-cms.field name="caption" label="Caption" :value="$image->caption"/><x-cms.field name="image" label="Replace image (optional)" type="file" accept="image/jpeg,image/png,image/webp"/><button class="button button-outline small">Save image</button></form><label>Reusable image URL<input type="text" value="{{ $image->url }}" readonly></label><form method="POST" action="{{ route('admin.media.destroy',$image) }}" data-confirm="Delete this image? Only unused images may be deleted.">
+@csrf @method('DELETE')<button class="cms-danger">Delete if unused</button></form></article>
+@empty<div class="panel cms-form-panel empty-state"><h2>Your image library starts here.</h2><p>Upload an image to use it in the editor or galleries.</p></div>
+@endforelse</div><div class="cms-pagination">{{ $records->links() }}</div>
+@endsection

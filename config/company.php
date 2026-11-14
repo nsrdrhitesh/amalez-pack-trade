@@ -2,7 +2,7 @@
 
 return [
     // Confirmed display name; the registered legal identity remains unspecified.
-    'name' => env('COMPANY_NAME', 'Amlez Pack Trade'),
+    'name' => 'Amalez Pack Trade',
     'domain' => 'https://amalezpacktrade.com',
     'legal_name' => null,
     'logo' => null,

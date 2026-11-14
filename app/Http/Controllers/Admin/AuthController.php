@@ -1,37 +1,58 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\AdminBootstrap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
-class AuthController extends Controller {
-    public function loginForm() { return view('admin.auth.form', ['register' => false]); }
-    public function registerForm() { return view('admin.auth.form', ['register' => true]); }
-    public function register(Request $request) {
+
+class AuthController extends Controller
+{
+    public function loginForm()
+    {
+        return view('admin.auth.form', ['register' => false]);
+    }
+
+    public function registerForm()
+    {
+        return view('admin.auth.form', ['register' => true]);
+    }
+
+    public function register(Request $request)
+    {
         if (app()->environment('production')) {
-            $user = app(\App\Services\AdminBootstrap::class)->register($request);
+            $user = app(AdminBootstrap::class)->register($request);
             Auth::login($user);
             $request->session()->regenerate();
+
             return redirect()->route('admin.dashboard')->with('status', 'Administrator provisioned. Bootstrap registration is now closed.');
         }
         $data = $request->validate([
-            'name' => ['required','string','max:100'],
-            'email' => ['required','email','max:255','unique:users,email'],
-            'password' => ['required','confirmed',Password::min(12)->mixedCase()->numbers()],
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::min(12)->mixedCase()->numbers()],
         ]);
         $user = new User($data);
         $user->is_admin = true;
+        if (config('cms.enabled')) {
+            $user->cms_role = 'owner';
+        }
         $user->save();
         Auth::login($user);
         $request->session()->regenerate();
+
         return redirect()->route('admin.dashboard')->with('status', 'Your local administrator account is ready.');
     }
-    public function login(Request $request) {
-        $data = $request->validate(['email' => ['required','email'], 'password' => ['required','string'], 'remember' => ['sometimes','boolean']]);
+
+    public function login(Request $request)
+    {
+        $data = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string'], 'remember' => ['sometimes', 'boolean']]);
         $key = 'admin-login:'.Str::transliterate(Str::lower($data['email'])).'|'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 5)) {
             throw ValidationException::withMessages(['email' => 'Too many attempts. Try again in '.RateLimiter::availableIn($key).' seconds.']);
@@ -42,10 +63,16 @@ class AuthController extends Controller {
         }
         RateLimiter::clear($key);
         $request->session()->regenerate();
+
         return redirect()->intended(route('admin.dashboard'));
     }
-    public function logout(Request $request) {
-        Auth::logout(); $request->session()->invalidate(); $request->session()->regenerateToken();
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('admin.login');
     }
 }

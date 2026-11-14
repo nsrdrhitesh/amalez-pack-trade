@@ -1,0 +1,1 @@
+<div class="site-honeypot" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label></div><input type="hidden" name="_form_token" value="{{ \Illuminate\Support\Facades\Crypt::encryptString((string)now()->timestamp) }}">

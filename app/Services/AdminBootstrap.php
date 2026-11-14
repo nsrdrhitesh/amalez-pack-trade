@@ -45,6 +45,9 @@ class AdminBootstrap
             $user = new User($data);
             $user->email = $invite->email;
             $user->is_admin = true;
+            if (config('cms.enabled')) {
+                $user->cms_role = 'owner';
+            }
             $user->save();
             DB::table('admin_bootstrap_invitations')->where('id', 1)->update([
                 'token_hash' => null, 'consumed_at' => now(), 'updated_at' => now(),

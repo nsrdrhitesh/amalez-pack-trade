@@ -1,0 +1,5 @@
+@props(['name','label'=>'Content','value'=>'','media'=>[]])
+@php($editorId='editor-'.str_replace(['[',']','.'],['-','','-'],$name))
+<div class="cms-field"><label for="{{ $editorId }}-surface">{{ $label }}</label><input type="hidden" id="{{ $editorId }}" name="{{ $name }}" value="{{ old($name,$value) }}"><trix-editor id="{{ $editorId }}-surface" input="{{ $editorId }}" class="trix-content" data-upload-url="{{ route('admin.media.store') }}"></trix-editor><small>Images must have ALT text. Uploaded files are validated; unsafe HTML is removed on save.</small><div class="cms-inline-media"><label>Reuse a library image<select id="{{ $editorId }}-library"><option value="">Choose an image</option>
+@foreach($media  as $image)<option value="{{ $image->url }}" data-alt="{{ $image->alt }}">{{ $image->alt }}</option>
+@endforeach</select></label><button type="button" class="button button-outline small" data-insert-image="{{ $editorId }}">Insert image</button></div><p class="cms-editor-status" role="status"></p></div>

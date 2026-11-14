@@ -17,7 +17,7 @@ jobs:
       - uses: shivammathur/setup-php@d52fc211a0436f8839a587b3b5b8efddab4744ea # v2
         with:
           php-version: '8.2'
-          extensions: mbstring, dom, fileinfo, curl, pdo_sqlite, sqlite3, xml, zip
+          extensions: mbstring, dom, fileinfo, curl, gd, pdo_sqlite, sqlite3, xml, zip
           tools: composer:v2
           coverage: none
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
@@ -62,5 +62,5 @@ jobs:
       - name: Verify public domain
         run: |
           curl --fail --silent --show-error --retry 3 --retry-delay 5 https://amalezpacktrade.com/ > /tmp/homepage.html
-          grep -q 'Protect the product.' /tmp/homepage.html
+          grep -q 'Amalez Pack Trade' /tmp/homepage.html
           curl --fail --silent --show-error https://amalezpacktrade.com/release.json | php -r '$r=json_decode(stream_get_contents(STDIN),true); exit(($r["commit"]??"")===getenv("GITHUB_SHA")?0:1);'

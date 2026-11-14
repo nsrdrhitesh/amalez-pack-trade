@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './site.css';
 @source '../views/frontend/**/*.blade.php';
 @source '../js/**/*.js';
 @theme{--font-sans:'Segoe UI',Arial,sans-serif;--color-orange:#dd6b36;--color-charcoal:#233032}

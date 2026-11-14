@@ -53,8 +53,14 @@ if [[ ! -e "$release/.prepared" ]]; then
         if(config("admin.enabled")) {
             if(config("database.default")!=="mysql" || !Illuminate\Support\Facades\Schema::hasColumn("users","is_admin") || !Illuminate\Support\Facades\Schema::hasTable("demo_activity_logs") || !Illuminate\Support\Facades\Schema::hasTable("admin_bootstrap_invitations")) {fwrite(STDERR,"Admin database readiness validation failed\n");exit(1);}
         }
+        if(config("cms.enabled")) {
+            foreach (["media","pages","services","posts","content_sections","seo_metadata","media_links","related_services","categories","tags","post_category","post_tag","comments","form_fields","inquiries","inquiry_values","navigation_menus","navigation_items","website_settings","activity_logs"] as $table) {
+                if(!Illuminate\Support\Facades\Schema::hasTable($table)) {fwrite(STDERR,"CMS schema readiness validation failed\n");exit(1);}
+            }
+            if(!Illuminate\Support\Facades\Schema::hasColumn("users","cms_role") || !App\Models\User::where("is_admin",true)->where("cms_role","owner")->exists() || !App\Models\Page::where("slug","home")->exists()) {fwrite(STDERR,"CMS content and owner readiness validation failed\n");exit(1);}
+        }
         $response=$app->make(Illuminate\Contracts\Http\Kernel::class)->handle(Illuminate\Http\Request::create("https://amalezpacktrade.com/"));
-        if($response->getStatusCode()!==200 || !str_contains($response->getContent(),"Protect the product.") || !str_contains($response->getContent(),"Amlez Pack Trade")) {fwrite(STDERR,"Staged Laravel smoke test failed\n");exit(1);}
+        if($response->getStatusCode()!==200 || !str_contains($response->getContent(),"Amalez Pack Trade")) {fwrite(STDERR,"Staged Laravel smoke test failed\n");exit(1);}
         echo "Staged Laravel application boots with production settings.\n";
     '
     printf '%s\n' "$commit" > "$release/.prepared"
@@ -95,7 +101,7 @@ else
     [[ -L "$public_root" && "$(readlink "$public_root")" == "$deploy_root/current/public" ]] || { echo 'Unexpected public root; refusing replacement' >&2; false; }
 fi
 page=$(curl --fail --silent --show-error --max-time 25 --resolve "$domain:443:46.202.161.251" "https://$domain/")
-[[ "$page" == *'Protect the product.'* && "$page" == *'Amlez Pack Trade'* ]] || false
+[[ "$page" == *'Amalez Pack Trade'* ]] || false
 live_commit=$(curl --fail --silent --show-error --max-time 20 --resolve "$domain:443:46.202.161.251" "https://$domain/release.json" | php -r '$r=json_decode(stream_get_contents(STDIN),true);echo $r["commit"]??"";')
 [[ "$live_commit" == "$commit" ]] || false
 trap - ERR

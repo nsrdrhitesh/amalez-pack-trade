@@ -1,1 +1,1 @@
-<a href="{{ route('home') }}" {{ $attributes->class(['brand']) }} aria-label="Forma home"><span class="brand-mark" aria-hidden="true">f</span>forma<span class="brand-dot">.</span></a>
+<a href="{{ route('home') }}" {{ $attributes->class(['brand']) }} aria-label="Amalez Pack Trade home"><img src="{{ asset('images/branding/mark.svg') }}" width="32" height="36" alt=""><span>PackTrade<small>Amalez Pack Trade</small></span></a>
