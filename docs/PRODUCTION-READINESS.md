@@ -46,3 +46,19 @@ Preferred candidate: one GitHub Actions pipeline builds/tests an artifact and de
 If SSH cannot be used, explain the exact limitation before selecting Hostinger's supported Git or archive method. Do not install two automatic deployment mechanisms. Do not upload a Laravel source root directly into `public_html`.
 
 Before switching any existing content or editing DNS, inspect and back up the actual target, present the exact changes, and obtain the requested approval. No DNS, hosting-account setting, production-file, database, or live-site changes have been made.
+# Current status — CMS release review, 15 November 2026
+
+The historical readiness notes below describe the initial static deployment preparation and are superseded by this status. Hostinger now serves the deployed Laravel application through the approved GitHub Actions/SSH release workflow. Shared production environment and storage remain outside the public directory. The existing administrator and dedicated MySQL database are connected; unrestricted registration and bootstrap registration are closed.
+
+The dynamic CMS implementation is committed locally as `559ddfab2075d728076fa3ef0fe4381a6085fbca` and staged privately on Hostinger. It has **not** been activated or pushed to the auto-deploying branch. Production `CMS_ENABLED` remains false. The active release remains `e2ed5b5db6df4b11efdf079e307994cc3d8fae2c-43484680804-1`.
+
+Validation: 61 automated tests passed, 623 assertions; Vite production assets built; route and Blade caches compiled; candidate secret scan checked 201 files with no findings for its defined patterns. Browser preview verified public responsive layouts, local administrator login/dashboard, Trix editor controls, and adding an optional section. These checks do not constitute live CMS validation.
+
+Private release staging succeeded on Hostinger with production dependency/platform checks, configuration/route/view cache generation, and a kernel homepage smoke test. GD/WebP support is available. A MySQL `migrate --pretend` review confirmed the one additive CMS migration creates 20 tables, adds nullable `users.cms_role`, and maps existing administrators to owner. Five applied migrations and the sole administrator remained unchanged after review.
+
+The latest private server backup is `cms-before-20261114-192317.sql.gz` (UTC filename), SHA-256 `7c60403ea921c72ec4873ec82ae8cb0421a991ec9945c1551118470d94c93106`. Decompression, schema/table and row counts, and completion marker were verified. No restore drill was performed; no database export was copied locally or committed.
+
+**Pending approval:** apply only `2026_11_14_000001_create_cms_tables.php` to the existing dedicated production database; seed initial illustrative CMS content without accounts; enable CMS; activate the staged release and publish through the existing workflow. No database resets, credential changes, new account provisioning, or DNS changes are included. APP_KEY and existing records must remain intact. Live CMS/contact/admin checks remain pending this approval and activation. Company details, legal copy, SMTP notification configuration, and indexing approval remain editorial/setup work.
+
+---
+
