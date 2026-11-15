@@ -61,7 +61,8 @@ class Seo
             }
             $schema[] = $entity;
         }
-        if ($breadcrumbs) {
+        $suppliedTypes = collect($schema)->flatMap(fn ($entry) => $entry['@graph'] ?? [$entry])->pluck('@type')->flatten();
+        if ($breadcrumbs && ! $suppliedTypes->contains('BreadcrumbList')) {
             $schema[] = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => array_map(fn ($b, $i) => ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $b['title'], 'item' => $b['url']], $breadcrumbs, array_keys($breadcrumbs))];
         }
         $business = Cms::setting('business', []);

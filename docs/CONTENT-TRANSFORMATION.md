@@ -21,7 +21,7 @@ Existing demo records will be preserved as drafts, never deleted. Existing edito
 
 The 200 original built-in-generated images are saved as optimized WebP files, with 200 unique SHA-256 checksums and 17,016,136 bytes total. The manifest includes per-page mappings, purpose, scene prompts, ALT text and dimensions. The full library was reviewed in contact sheets with selected full-size checks. Public previews were inspected at 375, 430, 768, 1024, 1440 and 1920 pixels; the mobile menu and three-level service breadcrumbs worked, and the inspected console showed no JavaScript errors.
 
-The suite passes 67 tests with 1,097 assertions, including original authentication/CMS coverage and the new content, preservation, media, hierarchy, taxonomy, schema and indexing checks. Production Vite build succeeded. Route and Blade cache compilation and Composer validation passed. The defined-pattern candidate secret scan found no matches. No new dependencies or database migrations were introduced.
+The suite passes 67 tests with 1,099 assertions, including original authentication/CMS coverage and the new content, preservation, media, hierarchy, taxonomy, schema and indexing checks. Production Vite build succeeded. Route and Blade cache compilation and Composer validation passed. The defined-pattern candidate secret scan found no matches. No new dependencies or database migrations were introduced.
 
 The existing GitHub deployment run 43632193554 succeeded for commit 4caca1f. Production still has six migrations, one administrator, ten initial pages, seven initial service concepts, three initial articles and seven initial media assets. The new content import has not run there.
 
@@ -35,6 +35,8 @@ The production content fingerprint is f42c3006f43beec5c81382222d5513d0f821f7332a
 
 The importer verifies the review fingerprint before applying and again inside its transaction after locking the reviewed content rows, preventing edits during import from being silently replaced. Visitor submissions remain outside that lock scope. A rerun of the same release preserves subsequent editor changes.
 
-Full validation: 67 tests / 1,097 assertions; targeted import tests also rerun after the transaction guard. Local full-library preview: http://127.0.0.1:8003/ using an isolated SQLite file and a distinct preview session cookie. It contains the actual 200-image gallery mappings. Its development-only account is not a production account.
+Full validation: 67 tests / 1,099 assertions; targeted import tests also rerun after the transaction guard. Local full-library preview: http://127.0.0.1:8003/ using an isolated SQLite file and a distinct preview session cookie. It contains the actual 200-image gallery mappings. Its development-only account is not a production account.
 
 Pending approval: apply this content plan and publish through the existing workflow. An explicit indexing option can enable the 41 complete eligible URLs; legal pages remain noindex and archived records stay out of the sitemap. Production environment credentials, APP_KEY, users, inquiries, comments and existing private files remain untouched.
+
+Manual JSON-LD overrides containing their own BreadcrumbList now suppress automatic duplicate breadcrumb output. The final complete suite passes 67 tests with 1,099 assertions.

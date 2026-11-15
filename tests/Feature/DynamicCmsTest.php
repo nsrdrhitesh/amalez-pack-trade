@@ -295,6 +295,11 @@ class DynamicCmsTest extends TestCase
         $this->get('/useful-content')->assertOk()->assertSee('A precise SEO title')->assertDontSee('</script><script>alert(1)</script>', false)->assertSee('application/ld+json', false);
         $this->get('/')->assertDontSee('"legalName"', false)->assertDontSee('LocalBusiness')->assertSee('noindex,nofollow', false);
         $this->get('/faq')->assertSee('FAQPage');
+        $about = Page::whereSlug('about')->firstOrFail();
+        $about->seo()->updateOrCreate([], ['data'=>['schema_mode'=>'manual','schema_json'=>json_encode(['@context'=>'https://schema.org','@graph'=>[['@type'=>'WebPage','name'=>'About'],['@type'=>'BreadcrumbList','itemListElement'=>[]]]])]]);
+        $schema = app(\App\Services\Seo::class)->data($about->fresh(), [['title'=>'Home','url'=>url('/')]]);
+        $this->assertCount(1, $schema['schema']);
+        $this->assertCount(2, $schema['schema'][0]['@graph']);
     }
 
     public function test_empty_disabled_sections_and_missing_business_details_stay_hidden(): void
