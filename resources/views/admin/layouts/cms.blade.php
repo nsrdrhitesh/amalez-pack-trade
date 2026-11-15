@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="csrf-token" content="{{ csrf_token() }}"><title>
-@yield('title','CMS') | Amalez Pack Trade</title><link rel="icon" href="{{ asset('images/branding/mark.svg') }}" type="image/svg+xml">
+@yield('title','CMS') | {{ config('cms.brand') }}</title><link rel="icon" href="{{ asset('images/branding/mark.svg') }}" type="image/svg+xml">
 @vite(['resources/css/app.css','resources/js/cms.js'])</head>
 <body class="admin-page cms-admin" x-data="{sidebar:false}" @keydown.escape.window="sidebar=false"><a class="skip-link" href="#main">Skip to content</a><div class="sidebar-backdrop" x-show="sidebar" x-cloak @click="sidebar=false"></div>
 <aside class="admin-sidebar" :class="{'is-open':sidebar}"><div class="sidebar-brand"><x-brand/><button class="icon-button mobile-only" @click="sidebar=false" aria-label="Close navigation"><x-icon name="close"/></button></div><div class="workspace-switch"><span class="workspace-avatar">P</span><div><strong>PackTrade CMS</strong><small>{{ ucfirst(auth()->user()->cms_role??'administrator') }}</small></div></div>
@@ -23,4 +23,4 @@
 @foreach($errors->all() as $error)<li>{{ $error }}</li>
 @endforeach</ul></div>
 @endif @yield('content')</main>
-<footer class="admin-footer"><span>© {{ date('Y') }} Amalez Pack Trade</span><span>Designed, Developed & Maintained by <a href="https://hiteshahire.in" target="_blank" rel="noopener noreferrer">Hitesh Ahire</a></span></footer></div></body></html>
+<footer class="admin-footer"><span>© {{ date('Y') }} {{ config('cms.brand') }}</span><span>Designed, Developed & Maintained by <a href="https://hiteshahire.in" target="_blank" rel="noopener noreferrer">Hitesh Ahire</a></span></footer></div></body></html>

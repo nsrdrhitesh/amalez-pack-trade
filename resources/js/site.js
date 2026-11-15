@@ -12,7 +12,7 @@ export default function registerSite(Alpine) {
         },
     }));
     Alpine.data('imageGallery', (count) => ({
-        count, index: 0, playing: false, paused: false, timer: null,
+        count, index: 0, playing: !matchMedia('(prefers-reduced-motion: reduce)').matches, paused: false, timer: null,
         init() { this.timer = setInterval(() => { if (this.playing && !this.paused && !document.hidden && !matchMedia('(prefers-reduced-motion: reduce)').matches) this.next(); }, 5000); },
         destroy() { clearInterval(this.timer); }, next() { this.index = (this.index + 1) % this.count; }, previous() { this.index = (this.index - 1 + this.count) % this.count; },
     }));

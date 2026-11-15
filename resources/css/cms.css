@@ -66,3 +66,12 @@ trix-editor img { max-width: 100%; height: auto; } trix-toolbar .trix-button-gro
 @media(max-width:1200px) { .cms-editor-grid { grid-template-columns: minmax(0,1fr) 260px; }.cms-media-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media(max-width:900px) { .cms-editor-grid { grid-template-columns: 1fr; }.cms-admin .topbar-actions { gap: 5px; }.cms-admin .topbar-actions > a { font-size: 11px; } }
 @media(max-width:600px) { .cms-form-grid,.cms-media-grid { grid-template-columns: 1fr; }.cms-admin .cms-form-panel { padding: 18px; }.cms-admin .admin-content { padding: 22px 16px; }.cms-admin .dashboard-heading { flex-direction: column; align-items: start; gap: 18px; }.cms-inline-media { display: block; }.cms-admin .admin-footer { display: grid; gap: 10px; line-height: 1.7; }.cms-admin .metric-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }.cms-profile summary { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+/* Shared business identity for the existing authentication interface. */
+.auth-page { --color-primary: #b65328; --color-primary-dark: #873a1d; }
+.auth-page .auth-story { background: #f1e9dd; color: #273234; }
+.auth-page .auth-story h1, .auth-page .auth-story p { color: #273234; }
+.auth-page .auth-sculpture { color: #b65328; }
+.auth-page .auth-eyebrow, .auth-page .eyebrow { color: #a64d28; }
+.auth-page .button-primary { background: #b65328; box-shadow: 0 6px 18px #b653281a; }
+.auth-page .button-primary:hover { background: #873a1d; }
+.brand span { font-size: 16px; }

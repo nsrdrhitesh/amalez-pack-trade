@@ -5,7 +5,7 @@ Alpine.data('packagingSite', () => ({
     active: 'home', filter: 'All formats', category: '', selected: null, summary: '',
     products: [], observer: null, brand: '',
     init() {
-        this.brand = document.querySelector('meta[property="og:site_name"]')?.content || 'Amlez Pack Trade';
+        this.brand = document.querySelector('meta[property="og:site_name"]')?.content || 'Amalez PackTrade';
         this.products = JSON.parse(document.getElementById('packaging-products')?.textContent || '[]');
         this.observer = new IntersectionObserver(entries => {
             for (const entry of entries) if (entry.isIntersecting) this.active = entry.target.id;
@@ -38,7 +38,7 @@ Alpine.data('packagingSite', () => ({
         if (!this.summary) return;
         const url = URL.createObjectURL(new Blob([this.summary], { type: 'text/plain;charset=utf-8' }));
         const anchor = document.createElement('a');
-        anchor.href = url; anchor.download = 'amlez-pack-trade-requirement.txt';
+        anchor.href = url; anchor.download = 'amalez-packtrade-requirement.txt';
         document.body.appendChild(anchor); anchor.click(); anchor.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     },

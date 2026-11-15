@@ -1,5 +1,5 @@
 @extends('admin.layouts.cms') @section('title','Website settings & branding') @section('content')
-<div class="dashboard-heading"><div><span class="eyebrow">TRUSTED OWNER CONTROLS</span><h1>Make it unmistakably yours.</h1><p>Amalez Pack Trade · PackTrade. Leave unconfirmed details empty; they stay hidden.</p></div></div>
+<div class="dashboard-heading"><div><span class="eyebrow">TRUSTED OWNER CONTROLS</span><h1>Make it unmistakably yours.</h1><p>Amalez PackTrade · PackTrade. Leave unconfirmed details empty; they stay hidden.</p></div></div>
 <form method="POST" action="{{ route('admin.website-settings.update') }}" class="cms-stack">
 @csrf @method('PUT')
 <section class="panel cms-form-panel"><h2>Brand identity</h2><p>The original packaging-and-print mark is supplied as SVG. Replace the display logo with approved media when available.</p><div class="cms-form-grid">

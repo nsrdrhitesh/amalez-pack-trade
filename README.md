@@ -1,66 +1,42 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+﻿# Amalez PackTrade
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 packaging and printing website with a Blade, Tailwind, Alpine and Vite frontend and a MySQL-backed CMS.
 
-## About Laravel
+The confirmed main services are Rotogravure Pouches, Digital Printed Pouches, Flexo Labels, Paper Boxes and Corrugated Boxes. Twenty researched format guides sit below them. Ten original articles provide practical buyer guidance. The original 200-image WebP library is illustrative, not evidence of delivered work, factory ownership or tested performance.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Application structure
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- `app/Http/Controllers/Admin`: existing authentication and CMS modules.
+- `app/Http/Controllers/Frontend`: public content, protected media delivery, inquiries and moderated comments.
+- `app/Models`: normalized content, taxonomy, media, SEO, navigation and private visitor records.
+- `app/Services/BusinessContentRelease.php`: reviewed, fingerprint-protected editorial import.
+- `database/content`: service/article/page source and asset manifest. After import, public content comes from editable database records.
+- `resources/views/site`: reusable public templates; no hardcoded service catalogue.
+- `resources/views/admin/cms`: editors, media, inquiries, moderation, settings and roles.
+- `public/images/business`: 200 optimized original product and editorial images.
+- `public/images/branding`: original SVG mark and light/dark wordmark concepts.
+- `docs/research`: source record and image art direction.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Development
 
-## Learning Laravel
+Install locked dependencies with `composer install` and `npm ci`. Copy `.env.example` to `.env` only when no local environment exists, then configure the intended local database. Never replace an existing application key or database credentials.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+For a new, confirmed local database, run migrations, then `php artisan db:seed --class=CmsSeeder`. Set `CMS_ENABLED=true` and `ADMIN_ENABLED=true` in the local environment. Keep public registration closed and use the existing `php artisan admin:create` command for an administrator.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+`php artisan content:transform` prints the editorial plan and current fingerprint. After reviewing that local target, apply it using `php artisan content:transform --apply --expected=THE_REVIEWED_HASH`. The importer preserves previous services/posts as drafts and stops if content changed since review. It is versioned and does not overwrite later editor changes when rerun. Production application requires explicit approval of its own reviewed plan.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Build with `npm run build`; start with `php artisan serve`. Public routes include `/`, `/about`, `/services`, nested `/services/...`, `/blog`, `/blog/{slug}`, `/contact` and `/faq`. Admin entry is `/admin/login`; the protected dashboard is `/admin/dashboard`. Production bootstrap registration remains closed.
 
-## Laravel Sponsors
+## Validation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Run `php scripts/verify-content-assets.php`, `php artisan test` and `npm run build`. PHPUnit forces its testing environment and in-memory SQLite database, independent of a preview server's environment. The asset check validates local WebP files, dimensions, checksums, uniqueness, ALT text and size limits.
 
-### Premium Partners
+The CMS supports owner/manager/editor authorization, safe raster uploads, HTML purification, CSRF/session protection, moderation, private inquiries, SEO fields and validated manual JSON-LD. Optional analytics requires visitor consent; inquiry email notification requires separately configured SMTP.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Production
 
-## Contributing
+Use the existing `nsrdrhitesh/amalez-pack-trade` repository, `main` branch and GitHub Actions/verified SSH release workflow. The Laravel application, shared environment, private media and backups remain outside the web root. Never commit `.env`, SSH keys, database exports, local tooling or runtime files.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The reviewed content release needs no schema migration. Stage and back up before applying its production content plan; preserve existing users, credentials, APP_KEY, inquiries, comments and private storage. The optional `--enable-indexing` switch is for an approved publication: eligible complete pages enter the sitemap, while provisional legal pages remain noindex and Infrastructure remains a draft.
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+See `docs/CONTENT-TRANSFORMATION.md` for current validation and release status. Historical readiness notes describe earlier deployment stages and do not supersede the current release record.

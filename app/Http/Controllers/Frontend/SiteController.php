@@ -104,15 +104,19 @@ class SiteController extends Controller
 
     public function sitemap()
     {
-        $urls = [url('/services'), url('/blog')];
-        foreach (Page::published()->get() as $p) {
-            $urls[] = $p->url;
-        }foreach (Service::published()->with('parent')->get() as $s) {
-            if ($s->isPublic()) {
+        $urls = [];
+        foreach (Page::published()->with('seo')->get() as $p) {
+            if ($p->seo?->data['index'] ?? false) {
+                $urls[] = $p->url;
+            }
+        }foreach (Service::published()->with('parent', 'seo')->get() as $s) {
+            if ($s->isPublic() && ($s->seo?->data['index'] ?? false)) {
                 $urls[] = $s->url;
             }
-        }foreach (Post::published()->get() as $p) {
-            $urls[] = $p->url;
+        }foreach (Post::published()->with('seo')->get() as $p) {
+            if ($p->seo?->data['index'] ?? false) {
+                $urls[] = $p->url;
+            }
         }
 
         return response()->view('site.sitemap', ['urls' => array_unique($urls)])->header('Content-Type', 'application/xml');

@@ -20,8 +20,8 @@ class ProductionReadinessTest extends TestCase
 
     public function test_branding_metadata_follows_the_configured_name(): void
     {
-        config(['company.name' => 'Amlez Pack Trade']);
-        $this->get('/')->assertOk()->assertSee('Amlez Pack Trade')->assertDontSee('Amlex Pack Trade');
+        config(['company.name' => 'Amalez PackTrade']);
+        $this->get('/')->assertOk()->assertSee('Amalez PackTrade')->assertDontSee('Forma');
     }
 
     public function test_public_pages_render_with_file_stores_and_no_database_configuration(): void

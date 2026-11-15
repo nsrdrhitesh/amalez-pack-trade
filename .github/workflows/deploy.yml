@@ -29,6 +29,7 @@ jobs:
           composer install --prefer-dist --no-interaction --no-progress
           cp .env.example .env
           php artisan key:generate --force
+          php scripts/verify-content-assets.php
           npm ci --no-audit --no-fund
           npm run build
           php artisan test
@@ -62,5 +63,5 @@ jobs:
       - name: Verify public domain
         run: |
           curl --fail --silent --show-error --retry 3 --retry-delay 5 https://amalezpacktrade.com/ > /tmp/homepage.html
-          grep -q 'Amalez Pack Trade' /tmp/homepage.html
+          grep -q 'Amalez PackTrade' /tmp/homepage.html
           curl --fail --silent --show-error https://amalezpacktrade.com/release.json | php -r '$r=json_decode(stream_get_contents(STDIN),true); exit(($r["commit"]??"")===getenv("GITHUB_SHA")?0:1);'

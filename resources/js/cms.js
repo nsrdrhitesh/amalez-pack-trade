@@ -2,8 +2,10 @@ import Alpine from 'alpinejs';
 import 'trix';
 
 Alpine.data('contentBlocks', (initial = []) => ({
+    dragIndex: null,
     sections: initial.map((section, index) => ({ ...section, key: crypto.randomUUID(), enabled: !!Number(section.enabled ?? 1), sort_order: section.sort_order ?? index })),
     add() { this.sections.push({ key: crypto.randomUUID(), type: 'text', title: '', body: '', media_id: '', enabled: true, sort_order: this.sections.length }); },
+    move(from, to) { if (!Number.isInteger(from) || to < 0 || to >= this.sections.length) return; const [item] = this.sections.splice(from, 1); this.sections.splice(to, 0, item); this.sections.forEach((section, index) => section.sort_order = index); this.dragIndex = null; },
 }));
 window.Alpine = Alpine;
 Alpine.start();

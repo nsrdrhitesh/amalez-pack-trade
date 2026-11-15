@@ -5,7 +5,7 @@
 @endif<div class="pack-hero-actions"><a class="pack-button pack-button-orange" href="{{ url('/services') }}">Explore our services <x-frontend::arrow/></a><a class="pack-text-link" href="{{ url('/contact') }}">Request a quote ↗</a></div><div class="pack-hero-footnote">{{ $settings['branding']['hero_footnote']??'' }}</div></div>
 @if($content->featuredMedia)<figure class="pack-hero-visual"><img src="{{ $content->featuredMedia->url }}" alt="{{ $content->featuredMedia->alt }}" width="{{ $content->featuredMedia->width }}" height="{{ $content->featuredMedia->height }}" fetchpriority="high"><figcaption><span>PACKAGING / PURPOSE / PRESENTATION</span><span>Illustrative packaging concepts ↗</span></figcaption></figure>
 @endif</div></section>
-@else<header class="site-page-hero pack-container"><span class="pack-kicker"><i class="orange-line"></i> AMALEZ PACK TRADE</span><h1>{{ $content->title }}</h1>
+@else<header class="site-page-hero pack-container"><span class="pack-kicker"><i class="orange-line"></i> {{ config('cms.brand') }}</span><h1>{{ $content->title }}</h1>
 @if($content->excerpt)<p>{{ $content->excerpt }}</p>
 @endif</header>
 @endif

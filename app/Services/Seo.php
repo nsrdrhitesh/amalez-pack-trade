@@ -39,7 +39,7 @@ class Seo
         $url = $content?->url ?? url()->current();
         $meta = ['title' => $data['title'] ?? ($content?->title ? ($content->title.' | '.$brand) : $brand), 'description' => $data['description'] ?? $content?->excerpt ?? '',
             'canonical' => $data['canonical'] ?? $url, 'robots' => ($data['index'] ?? false) && Cms::setting('indexable', false) ? 'index,follow' : 'noindex,nofollow',
-            'image' => $content?->seo?->image?->url ?? $content?->featuredMedia?->url ?? asset('images/hero/packaging-1600.webp')];
+            'image' => $content?->seo?->image?->url ?? $content?->featuredMedia?->url ?? asset('images/business/hero.webp')];
         $schema = [];
         if (($data['schema_mode'] ?? 'auto') === 'manual' && ! empty($data['schema_json'])) {
             $schema[] = json_decode($data['schema_json'], true);
@@ -51,7 +51,13 @@ class Seo
                 $entity['dateModified'] = $content->updated_at->toAtomString();
                 $author = $content->author_name ?: $brand.' Editorial';
                 $entity['author'] = ['@type' => str_contains($author, 'Editorial') ? 'Organization' : 'Person', 'name' => $author];
-                $entity['image'] = $meta['image'];
+                $entity['image'] = url($meta['image']);
+                $entity['mainEntityOfPage'] = $url;
+                $entity['publisher'] = ['@id' => rtrim(config('company.domain'), '/').'#organization'];
+            }
+            if ($content instanceof Service && $content->confirmed) {
+                $entity['serviceType'] = $content->title;
+                $entity['provider'] = ['@id' => rtrim(config('company.domain'), '/').'#organization'];
             }
             $schema[] = $entity;
         }
@@ -59,16 +65,22 @@ class Seo
             $schema[] = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => array_map(fn ($b, $i) => ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $b['title'], 'item' => $b['url']], $breadcrumbs, array_keys($breadcrumbs))];
         }
         $business = Cms::setting('business', []);
-        if ($content instanceof Page && $content->slug === 'home' && ! empty($business['legal_name']) && ! empty($business['verified'])) {
-            $org = ['@context' => 'https://schema.org', '@type' => 'Organization', 'name' => $business['legal_name'], 'url' => config('company.domain')];
+        if ($content instanceof Page && $content->slug === 'home' && ($data['schema_mode'] ?? 'auto') === 'auto') {
+            $domain = rtrim(config('company.domain'), '/');
+            // The display brand and domain are confirmed; legal/contact facts remain opt-in.
+            $org = ['@context' => 'https://schema.org', '@type' => 'Organization', '@id' => $domain.'#organization', 'name' => $brand, 'url' => $domain];
+            if (! empty($business['legal_name']) && ! empty($business['verified'])) {
+                $org['legalName'] = $business['legal_name'];
+            }
             foreach (['email', 'telephone'] as $k) {
-                if (! empty($business[$k])) {
+                if (! empty($business['verified']) && ! empty($business[$k])) {
                     $org[$k] = $business[$k];
                 }
-            }if (! empty($business['address']) && ! empty($business['local_business_verified'])) {
+            }if (! empty($business['address']) && ! empty($business['local_business_verified']) && ! empty($business['verified'])) {
                 $org['@type'] = 'LocalBusiness';
                 $org['address'] = $business['address'];
             }$schema[] = $org;
+            $schema[] = ['@context' => 'https://schema.org', '@type' => 'WebSite', '@id' => $domain.'#website', 'name' => $brand, 'url' => $domain, 'publisher' => ['@id' => $domain.'#organization']];
         }
         if ($content && ($data['schema_mode'] ?? 'auto') === 'auto') {
             $faqs = $content->sections->filter(fn ($s) => $s->type === 'faq' && $s->visible() && filled(strip_tags($s->body ?? '')));

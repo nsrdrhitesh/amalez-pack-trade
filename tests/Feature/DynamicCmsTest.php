@@ -57,7 +57,7 @@ class DynamicCmsTest extends TestCase
     public function test_all_independent_public_pages_and_three_original_articles_render(): void
     {
         foreach (['/', '/about', '/services', '/blog', '/contact', '/faq', '/infrastructure', '/privacy-policy', '/terms-and-conditions', '/cookie-policy'] as $url) {
-            $this->get($url)->assertOk()->assertSee('Amalez Pack Trade')->assertDontSee('Forma');
+            $this->get($url)->assertOk()->assertSee('Amalez PackTrade')->assertDontSee('Forma');
         }
         $this->assertDatabaseCount('posts', 3);
         foreach (Post::all() as $post) {
@@ -127,6 +127,7 @@ class DynamicCmsTest extends TestCase
     {
         $draft = Page::create($this->content(['slug' => 'draft-preview', 'status' => 'draft']));
         $scheduled = Post::create(collect($this->content(['slug' => 'future-article', 'status' => 'scheduled', 'published_at' => now()->addDay()]))->except('template')->all());
+        $scheduled->seo()->create(['data'=>['index'=>true]]);
         $this->get('/draft-preview')->assertNotFound();
         $this->get('/blog/future-article')->assertNotFound();
         $this->get('/sitemap.xml')->assertDontSee('future-article');
@@ -292,7 +293,7 @@ class DynamicCmsTest extends TestCase
         $json = json_encode(['@context' => 'https://schema.org', '@type' => 'WebPage', 'name' => '</script><script>alert(1)</script>']);
         $this->post('/admin/cms/pages', $this->content(['seo' => ['title' => 'A precise SEO title', 'description' => 'A useful page description.', 'schema_mode' => 'manual', 'schema_json' => $json]]))->assertRedirect()->assertSessionHasNoErrors();
         $this->get('/useful-content')->assertOk()->assertSee('A precise SEO title')->assertDontSee('</script><script>alert(1)</script>', false)->assertSee('application/ld+json', false);
-        $this->get('/')->assertDontSee('"@type":"Organization"', false)->assertDontSee('LocalBusiness')->assertSee('noindex,nofollow', false);
+        $this->get('/')->assertDontSee('"legalName"', false)->assertDontSee('LocalBusiness')->assertSee('noindex,nofollow', false);
         $this->get('/faq')->assertSee('FAQPage');
     }
 

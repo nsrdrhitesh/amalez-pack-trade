@@ -59,7 +59,7 @@ class SubmissionController extends Controller
         $recipient = Cms::setting('notification_email');
         if (config('mail.default') === 'smtp' && filled(config('mail.mailers.smtp.host')) && filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
             try {
-                Mail::raw('A new website inquiry is available in the protected admin panel. Reference: '.$inquiry->reference, fn ($m) => $m->to($recipient)->subject('New Amalez Pack Trade inquiry'));
+                Mail::raw('A new website inquiry is available in the protected admin panel. Reference: '.$inquiry->reference, fn ($m) => $m->to($recipient)->subject('New Amalez PackTrade inquiry'));
             } catch (\Throwable$e) {
                 Log::warning('Inquiry stored; optional SMTP notification failed.');
             }

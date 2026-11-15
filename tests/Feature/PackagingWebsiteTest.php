@@ -25,7 +25,7 @@ class PackagingWebsiteTest extends TestCase
         DB::listen(function ($query) use (&$queries) {
             $queries[] = $query->sql;
         });
-        $this->get('/')->assertOk()->assertSee('Amalez Pack Trade')->assertCookieMissing(config('session.cookie'));
+        $this->get('/')->assertOk()->assertSee('Amalez PackTrade')->assertCookieMissing(config('session.cookie'));
         $this->assertSame([], $queries);
     }
 
@@ -33,7 +33,7 @@ class PackagingWebsiteTest extends TestCase
     {
         $document = $this->document($this->get('/')->assertOk()->getContent());
         $xpath = new \DOMXPath($document);
-        foreach (['home', 'about', 'products', 'industries', 'solutions', 'manufacturing', 'gallery', 'contact'] as $id) {
+        foreach (['home', 'about', 'products', 'industries', 'solutions', 'gallery', 'contact'] as $id) {
             $this->assertSame(1, $xpath->query('//*[@id="'.$id.'"]')->length, $id);
         }
         foreach ($document->getElementsByTagName('a') as $link) {
