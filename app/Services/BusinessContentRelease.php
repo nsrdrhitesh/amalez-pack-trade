@@ -68,7 +68,14 @@ class BusinessContentRelease
             throw new \RuntimeException('A new catalogue slug already exists. Review the collision before import.');
         }
 
-        return DB::transaction(function () use ($catalogue, $manifest, $enableIndexing) {
+        return DB::transaction(function () use ($catalogue, $manifest, $enableIndexing, $expected) {
+            // Lock the reviewed content while importing; visitor submissions stay independent.
+            foreach (['pages', 'services', 'posts', 'content_sections', 'seo_metadata', 'navigation_items', 'website_settings'] as $table) {
+                DB::table($table)->orderBy('id')->lockForUpdate()->get();
+            }
+            if (! hash_equals($this->fingerprint(), $expected)) {
+                throw new \RuntimeException('Content changed since review. Generate a new plan before applying.');
+            }
             $images = [];
             foreach ($manifest as $asset) {
                 $path = 'cms-media/business-'.$asset['id'].'-'.substr($asset['sha256'], 0, 12).'.webp';

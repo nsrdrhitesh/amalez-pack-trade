@@ -9,7 +9,7 @@
 - [x] Prepare repeatable, previewable content import with preservation checks; no schema migration unless needed.
 - [x] Update brand identity, homepage, About, SEO and schema.
 - [x] Validate admin editing, service paths, media, articles, metadata and contact/moderation behavior.
-- [ ] Build, tests, secret scan and release staging.
+- [x] Build, tests, secret scan and release staging.
 - [ ] Review production content changes and obtain approval before applying the content import.
 - [ ] Deploy existing repository/workflow and verify live release.
 
@@ -26,3 +26,15 @@ The suite passes 67 tests with 1,097 assertions, including original authenticati
 The existing GitHub deployment run 43632193554 succeeded for commit 4caca1f. Production still has six migrations, one administrator, ten initial pages, seven initial service concepts, three initial articles and seven initial media assets. The new content import has not run there.
 
 Latest private database backup: cms-before-20261115-042456.sql.gz (server UTC filename), 11,456 compressed bytes, SHA-256 fa6942d5243d042a54577d81a2a36d53dfd9631a9f567ee66506ef50a49579b6. Gzip contents, schema/table counts, row counts and completion marker were verified. The export stays outside the public directory on Hostinger; no restore drill was performed.
+
+## Private staging and publication review
+
+The release boots on Hostinger with existing production settings and database. Platform checks, configuration, route and Blade caches, and the staged kernel homepage smoke test passed. The live release remains 4caca1f; the new content is not applied and main has not been pushed for this release.
+
+The production content fingerprint is f42c3006f43beec5c81382222d5513d0f821f7332a9a67840be72e961deb6057. The plan creates 25 service pages, ten articles and 200 media records, updates six core pages, retains the seven former service records and three former articles as drafts, and makes Infrastructure a draft with its menu entry disabled. Provisional legal text is retained with corrected branding and noindex metadata. There are no pending schema migrations and no account changes.
+
+The importer verifies the review fingerprint before applying and again inside its transaction after locking the reviewed content rows, preventing edits during import from being silently replaced. Visitor submissions remain outside that lock scope. A rerun of the same release preserves subsequent editor changes.
+
+Full validation: 67 tests / 1,097 assertions; targeted import tests also rerun after the transaction guard. Local full-library preview: http://127.0.0.1:8003/ using an isolated SQLite file and a distinct preview session cookie. It contains the actual 200-image gallery mappings. Its development-only account is not a production account.
+
+Pending approval: apply this content plan and publish through the existing workflow. An explicit indexing option can enable the 41 complete eligible URLs; legal pages remain noindex and archived records stay out of the sitemap. Production environment credentials, APP_KEY, users, inquiries, comments and existing private files remain untouched.
