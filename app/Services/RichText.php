@@ -39,6 +39,8 @@ class RichText
                     continue;
                 }
                 $img->setAttribute('alt', $media->alt);
+                $img->setAttribute('width', (string) $media->width);
+                $img->setAttribute('height', (string) $media->height);
             } elseif (! filled($img->getAttribute('alt'))) {
                 $img->parentNode->removeChild($img);
 

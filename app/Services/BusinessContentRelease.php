@@ -124,7 +124,7 @@ class BusinessContentRelease
                 $children = $service->children()->get();
                 $inline = $children->first()?->featuredMedia ?? $images[$image];
                 $body = '<p>'.e($excerpt).'</p>'.$this->paragraphs($sections);
-                $body .= '<figure><img src="'.e($inline->url).'" alt="'.e($inline->alt).'"><figcaption>Original illustrative print and packaging concept.</figcaption></figure>';
+                $body .= '<figure><img src="'.e($inline->url).'" alt="'.e($inline->alt).'" width="'.$inline->width.'" height="'.$inline->height.'" loading="lazy" decoding="async"><figcaption>Original illustrative print and packaging concept.</figcaption></figure>';
                 $body .= '<h2>Explore the relevant formats</h2><p><a href="'.e(parse_url($service->url, PHP_URL_PATH)).'">'.e($service->title).'</a></p><ul>';
                 foreach ($children as $child) {
                     $body .= '<li><a href="'.e(parse_url($child->url, PHP_URL_PATH)).'">'.e($child->title).'</a></li>';

@@ -83,6 +83,12 @@ class BusinessContentReleaseTest extends TestCase
         foreach ($posts as $post) {
             $this->get($post->url)->assertOk()->assertSee('BlogPosting')->assertSee('FAQPage')->assertSee('Amalez PackTrade Editorial')->assertSee('/contact');
             $this->assertGreaterThan(300, str_word_count(strip_tags($post->body)));
+            $document = new \DOMDocument;
+            @$document->loadHTML($post->body);
+            foreach ($document->getElementsByTagName('img') as $image) {
+                $this->assertGreaterThan(0, (int) $image->getAttribute('width'));
+                $this->assertGreaterThan(0, (int) $image->getAttribute('height'));
+            }
             $this->assertGreaterThan(0, $post->tags->count());
             $this->assertNotEmpty($post->seo->data['canonical']);
             $this->assertTrue($post->comments_enabled);

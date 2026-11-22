@@ -54,7 +54,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/deploy-ssh"
           printf '%s\n' "$HOSTINGER_SSH_KEY" > "$RUNNER_TEMP/deploy-ssh/key"
           printf '%s\n' "$HOSTINGER_KNOWN_HOSTS" > "$RUNNER_TEMP/deploy-ssh/known_hosts"
-          ssh_options=(-i "$RUNNER_TEMP/deploy-ssh/key" -o IdentitiesOnly=yes -o BatchMode=yes -o KexAlgorithms=curve25519-sha256 -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/deploy-ssh/known_hosts")
+          ssh_options=(-i "$RUNNER_TEMP/deploy-ssh/key" -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=20 -o ConnectionAttempts=3 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o KexAlgorithms=curve25519-sha256 -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/deploy-ssh/known_hosts")
           release_id="$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           artifact_hash=$(sha256sum .tooling/release.tar.gz | cut -d ' ' -f 1)
           ssh "${ssh_options[@]}" -p "$HOSTINGER_PORT" "$HOSTINGER_USERNAME@$HOSTINGER_HOST" "mkdir -p '$HOSTINGER_DEPLOY_PATH/incoming'"
